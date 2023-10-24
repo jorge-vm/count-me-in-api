@@ -1,0 +1,44 @@
+// prisma/schema.prisma
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  rsvps     RSVP[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Event {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  location    String?
+  date        DateTime
+  rsvp_cap    Int?
+  rsvps       RSVP[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model RSVP {
+  id            String   @id @default(uuid())
+  user          User     @relation(fields: [userId], references: [id])
+  userId        String
+  event         Event    @relation(fields: [eventId], references: [id])
+  eventId       String
+  response      Boolean
+  num_attendees Int?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
